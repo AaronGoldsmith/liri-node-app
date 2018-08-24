@@ -1,4 +1,6 @@
 var dot = require('dotenv').config()
+var keys = require('keys.js');
+var Spotify = require('node-spotify-api')
 if (dot.error) {
     throw result.error
   }
