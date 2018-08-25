@@ -14,9 +14,9 @@ if(process.argv.length<=2){
 if (dot.error) {
     throw result.error
 }
-// an array of user input
+// command variable
 var cmd = process.argv[2];
-
+// an array of user input
 var cmdlist = process.argv;
 
 // removing default arguments [0 and 1] 
@@ -25,8 +25,8 @@ var urlArg = cmdlist.join(" ");
 
 // switch statement on string passed in to program
 switch(cmd){
-   case("concert-this"): concertThis(urlarg); break; // call concert function 
-   case("spotify-this-song"): spotifyThisSong(urlarg); break; // call a spotify function
+   case("concert-this"): concertThis(urlArg); break; // call concert function 
+   case("spotify-this-song"): spotifyThisSong(urlArg); break; // call a spotify function
    case("movie-this"): break; // call the movie function
    case("do-what-it-says"): break; // does another function
    default: console.log("<ERROR>: Invalid command given"); break;
@@ -36,11 +36,9 @@ function concertThis(artist){
     var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
     request(queryUrl,function(error, response, body) {
 
-        /* If there were no errors and the response code was 
-        200 (i.e. the request was successful)... */
+        /* If there were no errors and the response code is 200 */
         if (!error && response.statusCode === 200) {
-                // want to use JSON.parse(body)
-                var shows = JSON.parse(body);
+                var shows = JSON.parse(body); // JSON --> Javascript
                 console.log(shows.forEach(function(item){
 
                     var timestamp = moment(item.venue.datetime).format("MM/DD/YYYY")
@@ -69,10 +67,8 @@ function concertThis(artist){
 function spotifyThisSong(song){
     var spotify = new Spotify(keys.spotify);
     
-    // get just the first result (assuming in order of how close search matches results)
-
-    spotify
-        .search({ type: 'track', query: song ,limit: 1})
+    spotify // limiting the search to just top result
+        .search({ type: 'track', query: song})
         .then(function(response) {
            
             var item = response.tracks.items[0];
