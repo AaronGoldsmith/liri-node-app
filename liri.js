@@ -6,25 +6,30 @@ var moment = require('moment')
 
 
 
+if(process.argv.length<=2){
+    console.log("<ERROR>: Provide at least one command"); 
+    return;
+}
+
 if (dot.error) {
     throw result.error
 }
 // an array of user input
-var cmds = process.argv;
+var cmd = process.argv[2];
 
-// command will be third word (element #2)
-var cmd = cmds[2];
+var cmdlist = process.argv;
 
-// 
-cmds.splice(0,3); 
-var urlarg = cmds.join(" ");
+// removing default arguments [0 and 1] 
+cmdlist.splice(0,3); 
+var urlArg = cmdlist.join(" ");
+
+// switch statement on string passed in to program
 switch(cmd){
    case("concert-this"): concertThis(urlarg); break; // call concert function 
    case("spotify-this-song"): spotifyThisSong(urlarg); break; // call a spotify function
    case("movie-this"): break; // call the movie function
    case("do-what-it-says"): break; // does another function
-   case(""): console.log(" no command given")
-   default: console.log("ERROR: Invalid command given"); break;
+   default: console.log("<ERROR>: Invalid command given"); break;
 }
 
 function concertThis(artist){
