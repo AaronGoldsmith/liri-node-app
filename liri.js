@@ -6,36 +6,39 @@ var moment = require('moment')
 
 
 
+if(process.argv.length<=2){
+    console.log("<ERROR>: Provide at least one command"); 
+    return;
+}
+
 if (dot.error) {
     throw result.error
 }
+// command variable
+var cmd = process.argv[2];
 // an array of user input
-var cmds = process.argv;
+var cmdlist = process.argv;
 
-// command will be third word (element #2)
-var cmd = cmds[2];
+// removing default arguments [0 and 1] 
+cmdlist.splice(0,3); 
+var urlArg = cmdlist.join(" ");
 
-// 
-cmds.splice(0,3); 
-var urlarg = cmds.join(" ");
+// switch statement on string passed in to program
 switch(cmd){
-   case("concert-this"): concertThis(urlarg); break; // call concert function 
-   case("spotify-this-song"): spotifyThisSong(urlarg); break; // call a spotify function
+   case("concert-this"): concertThis(urlArg); break; // call concert function 
+   case("spotify-this-song"): spotifyThisSong(urlArg); break; // call a spotify function
    case("movie-this"): break; // call the movie function
    case("do-what-it-says"): break; // does another function
-   case(""): console.log(" no command given")
-   default: console.log("ERROR: Invalid command given"); break;
+   default: console.log("<ERROR>: Invalid command given"); break;
 }
 
 function concertThis(artist){
     var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
     request(queryUrl,function(error, response, body) {
 
-        /* If there were no errors and the response code was 
-        200 (i.e. the request was successful)... */
+        /* If there were no errors and the response code is 200 */
         if (!error && response.statusCode === 200) {
-                // want to use JSON.parse(body)
-                var shows = JSON.parse(body);
+                var shows = JSON.parse(body); // JSON --> Javascript
                 console.log(shows.forEach(function(item){
 
                     var timestamp = moment(item.venue.datetime).format("MM/DD/YYYY")
@@ -64,10 +67,8 @@ function concertThis(artist){
 function spotifyThisSong(song){
     var spotify = new Spotify(keys.spotify);
     
-    // get just the first result (assuming in order of how close search matches results)
-
-    spotify
-        .search({ type: 'track', query: song ,limit: 1})
+    spotify // limiting the search to just top result
+        .search({ type: 'track', query: song})
         .then(function(response) {
            
             var item = response.tracks.items[0];
