@@ -1,3 +1,4 @@
+/* Node Packages  */
 var dot = require('dotenv').config()
 var keys = require('./keys.js');
 var fs = require('fs')
@@ -9,17 +10,25 @@ var moment = require('moment')
 if (dot.error) {
     throw result.error
 }
-// command variable
+
+/* 
+    `process.argv` contains an array of values 
+     passed in through stdin (standard input) 
+ */
 var cmd = process.argv[2];
-// an array of user input
 var cmdlist = process.argv;
 
 
-// removing default arguments [0 and 1] 
-cmdlist.splice(0,3); 
-var urlArg = cmdlist.join(" ");
+/* 
+    splicing out elements in process.argv position 0 to 3
+    removes both default arguments (index 0 and 1),  
+    as well as the command given as the argument in index 2
+*/
+    // cmdlist.splice(0,3); 
+var urlArg = cmdlist.splice(3,cmdlist.length).join(" ");
+console.log(urlArg);
 
-// switch statement on string passed in to program
+// use a switch statement to determine which command was passed in
 switch(cmd){
    case("concert-this"): concertThis(urlArg); break; // call concert function 
    case("spotify-this-song"): spotifyThisSong(urlArg); break; // call a spotify function
@@ -32,9 +41,12 @@ function concertThis(artist){
     var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
     request(queryUrl,function(error, response, body) {
 
-        /* If there were no errors and the response code is 200 */
+    /*  If there were no errors and the response code is 200 */
         if (!error && response.statusCode === 200) {
-                var shows = JSON.parse(body); // JSON --> Javascript
+        /*      response and body are both JSOn objects,
+                want to parse into JS obj 
+        */
+                var shows = JSON.parse(body); 
                 console.log(shows.forEach(function(item){
 
                     var timestamp = moment(item.datetime).format("MM/DD/YYYY")
@@ -120,12 +132,12 @@ function pretty(category,size){
 }
 function formatText(text){
     var parts = text.split(" ");
-    var bord = " |     ";
-    var str = "   "+liner(20)+"\n"+bord;
+    var bdr = " |     ";
+    var str = "   "+liner(20)+"\n"+bdr;
     for(var i = 0;i<parts.length;i++){
         str += parts[i] + " ";
         if(i>0&&i%10==0){
-            str += "\n" +bord; 
+            str += "\n" +bdr; 
         }
     }
     return str+'\n  '+liner(40);

@@ -22,3 +22,6 @@ The node application can take in 1 of 4 commands
 ### Continued Development:
   - Adding in functionality to save user input/history in a separate text file
   - If an artist has a newer version of an old song, it will give the most recent version not OG
+
+### Things to try:
+ - Pipe the output through the less function
