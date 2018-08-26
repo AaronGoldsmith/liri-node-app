@@ -13,23 +13,23 @@ if (dot.error) {
     throw result.error
 }
 
-/* 
-    `process.argv` contains an array of values 
-     passed in through stdin (standard input) 
- */
+// values passed in through stdin
 var cmd = process.argv[2];
 var cmdlist = process.argv;
 
-
 /* 
-    splicing out elements in process.argv position 0 to 3
-    removes both default arguments (index 0 and 1),  
-    as well as the command given as the argument in index 2
+    splicing out elements in process.argv 3 to its length
+     care about keeping our query request
 */
-    // cmdlist.splice(0,3); 
-var urlArg = cmdlist.splice(3,cmdlist.length).join(" ");
+var urlArg = cmdlist.splice(3,cmdlist.length)
 console.log(urlArg);
-
+if(urlArg.length>0){
+    urlArg.join(" ");
+}else{
+    if(cmd=='spotify-this-song'){
+        urlArg="The Sign, Ace Of Base"
+    }
+}
 // use a switch statement to determine which command was passed in
 switch(cmd){
    case("concert-this"): concertThis(urlArg); break; // call concert function 
@@ -40,6 +40,7 @@ switch(cmd){
 }
 
 function concertThis(artist){
+    artist = artist.join(" ")
     var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
     request(queryUrl,function(error, response, body) {
 
@@ -48,50 +49,57 @@ function concertThis(artist){
             //  returns JSON objects, parse into JS obj
     
                 var shows = JSON.parse(body); 
-                console.log(shows.forEach(function(item){
+                debugger;
+                shows.forEach(function(item){
                     // Moment API
                     var timestamp = moment(item.datetime).format("MM/DD/YYYY")
 
                     var vName = item.venue.name;
                     var vCity = item.venue.city;
-
                     // prioritize the region first
                     // if it can't find region, it selects country as a backup
                     var vState = item.venue.region || item.venue.country;
                     
+                    // 
+                    var location = vName + "\n" + vCity+ ", " + vState;
                     // ommit any shows where a required key is missing
                     if((!vName) || (!vState) || (!timestamp) ){ 
                         return; 
                     }
-                    console.log(liner(7));
-                    console.log("(" + timestamp + ")");
-                    console.log(vName);
-                    console.log(vCity + ", " + vState);
-                    console.log(liner(7)+'\n');
-                    
-                }));
+                    var complete = (liner(7)+"\n("+timestamp+")\n"+location +"\n"+ liner(7)+"\n")
+                    // console.log(liner(7));
+                    // console.log("(" + timestamp + ")");
+                    // console.log(vName);
+                    // console.log(vCity + ", " + vState);
+                    // console.log(liner(7)+'\n');
+                    console.log(complete);
+                });
         }
     });
 }
 
 function spotifyThisSong(song){
-    // load the keys into 
+    // load the keys into spotify variable
     var spotify = new Spotify(keys.spotify);
     
     spotify
         .search({ type: 'track', query: song})
         .then(function(response) {
-            // limiting the search to just top result
+            // Limit the search to just a single result
             var item = response.tracks.items[0];
-            // format time
+            
+            // Using Moment.js API - format date
             var timeFrmt = moment(item.album.release_date,"YYYY-MM-DD").format("MM/DD/YYYY")
             console.log(item.name)
             console.log(timeFrmt);
             console.log(item.artists[0].name)
 
             // conditional check for the 30s preview url
-            if(item.preview_url){console.log(item.preview_url)}
-            else{console.log("  ~~> \""+item.name+"\" can not be previewed")}
+            if(item.preview_url){
+                console.log(item.preview_url);}
+            else{
+                console.log("  ~~> \""+item.name+"\" can not be previewed")
+            }
         })
         .catch(function(err) {
             console.log(err);
@@ -99,7 +107,7 @@ function spotifyThisSong(song){
 }
 
 function movieThis(movie){
-    // default movie if none selected
+    // Sets a default movie if none was given
     movie = movie || "Mr. Nobody";
 
     var str= "";
