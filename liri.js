@@ -92,7 +92,7 @@ function movieThis(movie){
 
         if (!error && response.statusCode === 200) {
             var movieObj = JSON.parse(body);
-            str += "\n\n\t["+movieObj.Title +"].\n"
+            str += "\n\n\t["+movieObj.Title +"]\n"
             str +="   "+liner(3)+"\n"
 
             str += "Produced in: " +movieObj.Country.split(", ").join(", and ");
@@ -100,8 +100,8 @@ function movieThis(movie){
             str += formatList(movieObj.Actors.split(", "),"Starring:");
             str += "\n";
 
-            // Rotten tomatoes is choice #2
-            if(movieObj.Ratings[1].Source ==="Rotten Tomatoes"){
+            // Rotten tomatoes is choice #2 if it exists
+            if(movieObj.Ratings.length>1){
                str += movieObj.Ratings[1].Source + " gave a rating of "+movieObj.Ratings[1].Value +"\n" ;
             }
          
@@ -112,6 +112,7 @@ function movieThis(movie){
              // adding line breaks
              str += formatText(movieObj.Plot)
         }
+        debugger;
         console.log(str);
       });
 }
