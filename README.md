@@ -14,10 +14,11 @@ Packages required:
 
 The node application can take in 1 of 4 commands
   - `concert-this  <band> ` - Takes in one argument, the name of the band.
-  - `spotify-this-song _<song>_` -  expects the title of a song and will return information along witha a 30sec preview
-  - `movie-this _<movie>_` - Expects a movie title, and will return the plot summary along with actors, year, etc
+  - `spotify-this-song <song>` -  expects the title of a song and will return information along witha a 30s preview
+  - `movie-this <movie>` - Expects a movie title, and will return the plot summary along with actors, year, etc
   - `do-what-it-says` - takes in no arguments, but expects a text file called "random.txt" to include the function and its respective parameter
 
 
 ### Continued Development:
- Adding in functionality to save user input/history in a separate text file
+  - Adding in functionality to save user input/history in a separate text file
+  - If an artist has a newer version of an old song, it will give the most recent version not OG

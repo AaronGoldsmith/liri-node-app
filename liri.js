@@ -6,12 +6,6 @@ var request = require('request');
 var moment = require('moment')
 
 
-
-if(process.argv.length<=2){
-    console.log("<ERROR>: Provide at least one command"); 
-    return;
-}
-
 if (dot.error) {
     throw result.error
 }
@@ -19,6 +13,7 @@ if (dot.error) {
 var cmd = process.argv[2];
 // an array of user input
 var cmdlist = process.argv;
+
 
 // removing default arguments [0 and 1] 
 cmdlist.splice(0,3); 
@@ -48,9 +43,8 @@ function concertThis(artist){
                     var vCity = item.venue.city;
                     // prioritize getting the region, falls back to country
                     var vState = item.venue.region || item.venue.country;
-                    debugger;
                     // ommit shows where at least one of the required keys are missing
-                    if((!vName) || (!vCity) || (!timestamp) ){ 
+                    if((!vName) || (!vState) || (!timestamp) ){ 
                         return; 
                     }
 
@@ -62,7 +56,6 @@ function concertThis(artist){
                 }));
         }
     });
-      
 }
 
 function spotifyThisSong(song){
@@ -83,18 +76,18 @@ function spotifyThisSong(song){
         .catch(function(err) {
             console.log(err);
         });
+        return 0;
 }
 
 function movieThis(movie){
-  // movie.split(" ").join("+")
-    var queryUrl = "http://www.omdbapi.com/?t="+ movie +"&y=&plot=full&apikey=trilogy"
+    var queryUrl = "http://www.omdbapi.com/?t="+ movie +"&y=&plot=short&apikey=trilogy"
     var str = "";
     request(queryUrl, function(error, response, body) {
 
         if (!error && response.statusCode === 200) {
             var movieObj = JSON.parse(body);
             str += "\n\n\t["+movieObj.Title +"]\n"
-            str +="   "+liner(3)+"\n"
+            str +="   "+liner(movieObj.Title.length)+"\n"
 
             str += "Produced in: " +movieObj.Country.split(", ").join(", and ");
             str +=" in " + movieObj.Year + "\n";
@@ -113,30 +106,29 @@ function movieThis(movie){
              // adding line breaks
              str += formatText(movieObj.Plot)
         }
-        debugger;
         console.log(str);
       });
+      return 0;
 }
 // FORMATTING HELPERS
 var liner = function(size){
-    var line = "—~—~—~—~"
-    return "  "+line.repeat(size)
+    var line = "—~"
+    return line.repeat(size)
 }
 function pretty(category,size){
     return "\n \t~ "+category+" ~\n "+ liner(size) +"\n"; 
 }
 function formatText(text){
-    var str = pretty("PLOT",8)
     var parts = text.split(" ");
-    var fun = " |     ";
-    str += fun;
+    var bord = " |     ";
+    var str = "   "+liner(20)+"\n"+bord;
     for(var i = 0;i<parts.length;i++){
         str += parts[i] + " ";
         if(i>0&&i%10==0){
-            str += "\n" +fun; 
+            str += "\n" +bord; 
         }
     }
-    return str+"\n"+liner(8);
+    return str+'\n  '+liner(40);
 }
 function formatList(list,named){
     var str = named;
