@@ -42,13 +42,13 @@ function concertThis(artist){
                 var shows = JSON.parse(body); // JSON --> Javascript
                 console.log(shows.forEach(function(item){
 
-                    var timestamp = moment(item.venue.datetime).format("MM/DD/YYYY")
+                    var timestamp = moment(item.datetime).format("MM/DD/YYYY")
 
                     var vName = item.venue.name;
                     var vCity = item.venue.city;
                     // prioritize getting the region, falls back to country
-                    var vState = item.venue.region || items.country;
-                    
+                    var vState = item.venue.region || item.venue.country;
+                    debugger;
                     // ommit shows where at least one of the required keys are missing
                     if((!vName) || (!vCity) || (!timestamp) ){ 
                         return; 
@@ -145,10 +145,7 @@ function formatList(list,named){
         (item,ind) => str += ("\n   "+(ind+1) + ". " + item));
     return str+"\n"; 
 }
-// PARENT
-    // 1. child
-    // 2. child
-    // 3. child
+
 function followDirections(){
    fs.readFile("random.txt","utf8",function(error,data){
        if(error){return;}
