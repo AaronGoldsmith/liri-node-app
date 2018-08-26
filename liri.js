@@ -27,7 +27,7 @@ var urlArg = cmdlist.join(" ");
 switch(cmd){
    case("concert-this"): concertThis(urlArg); break; // call concert function 
    case("spotify-this-song"): spotifyThisSong(urlArg); break; // call a spotify function
-   case("movie-this"): break; // call the movie function
+   case("movie-this"): movieThis(urlArg); break; // call the movie function
    case("do-what-it-says"): break; // does another function
    default: console.log("<ERROR>: Invalid command given"); break;
 }
@@ -83,9 +83,70 @@ function spotifyThisSong(song){
             console.log(err);
         });
 }
-function movieThis(movie){
 
+function movieThis(movie){
+  // movie.split(" ").join("+")
+    var queryUrl = "http://www.omdbapi.com/?t="+ movie +"&y=&plot=full&apikey=trilogy"
+    var str = "";
+    request(queryUrl, function(error, response, body) {
+
+        if (!error && response.statusCode === 200) {
+            var movieObj = JSON.parse(body);
+            str += "\n\n\t["+movieObj.Title +"].\n"
+            str +="   "+liner(3)+"\n"
+
+            str += "Produced in: " +movieObj.Country.split(", ").join(", and ");
+            str +=" in " + movieObj.Year + "\n";
+            str += formatList(movieObj.Actors.split(", "),"Starring:");
+            str += "\n";
+
+            // Rotten tomatoes is choice #2
+            if(movieObj.Ratings[1].Source ==="Rotten Tomatoes"){
+               str += movieObj.Ratings[1].Source + " gave a rating of "+movieObj.Ratings[1].Value +"\n" ;
+            }
+         
+            str += "Produced in: " +movieObj.Country + "\n";
+            str += "Lang: "+movieObj.Language+ "\n";
+            str += "IMDB rates it a: " + movieObj.imdbRating+ "\n";
+
+             // adding line breaks
+             str += formatText(movieObj.Plot)
+        }
+        console.log(str);
+      });
 }
+// FORMATTING HELPERS
+var liner = function(size){
+    var line = "—~—~—~—~"
+    return "  "+line.repeat(size)
+}
+function pretty(category,size){
+    return "\n \t~ "+category+" ~\n "+ liner(size) +"\n"; 
+}
+function formatText(text){
+    var str = pretty("PLOT",8)
+    var parts = text.split(" ");
+    var fun = " |     ";
+    str += fun;
+    for(var i = 0;i<parts.length;i++){
+        str += parts[i] + " ";
+        if(i>0&&i%10==0){
+            str += "\n" +fun; 
+        }
+    }
+    return str+"\n"+liner(8);
+}
+function formatList(list,named){
+    var str = named;
+    
+    list.forEach( 
+        (item,ind) => str += ("\n   "+(ind+1) + ". " + item));
+    return str+"\n"; 
+}
+// PARENT
+    // 1. child
+    // 2. child
+    // 3. child
 function followDirections(direction){
  
 }
