@@ -6,20 +6,24 @@ var request = require('request');
 var moment = require('moment')
 
 
+// throw an error if there was an issue
+// initializing the enviorment variables
 if (dot.error) {
     throw result.error
 }
+
 // command variable
 var cmd = process.argv[2];
+
 // an array of user input
 var cmdlist = process.argv;
 
 
-// removing default arguments [0 and 1] 
+// remove arguments index 0,1,2 (not needed)
 cmdlist.splice(0,3); 
 var urlArg = cmdlist.join(" ");
 
-// switch statement on string passed in to program
+// switch statement on string passed through argv
 switch(cmd){
    case("concert-this"): concertThis(urlArg); break; // call concert function 
    case("spotify-this-song"): spotifyThisSong(urlArg); break; // call a spotify function
@@ -31,27 +35,28 @@ switch(cmd){
 function concertThis(artist){
     var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
     request(queryUrl,function(error, response, body) {
-
         /* If there were no errors and the response code is 200 */
         if (!error && response.statusCode === 200) {
-                var shows = JSON.parse(body); // JSON --> Javascript
+                var shows = JSON.parse(body); // JSON -->  {keys:value}                
                 console.log(shows.forEach(function(item){
-
                     var timestamp = moment(item.datetime).format("MM/DD/YYYY")
 
                     var vName = item.venue.name;
                     var vCity = item.venue.city;
-                    // prioritize getting the region, falls back to country
+
+                    // prioritize the region first
+                    // than as a fall back it selects country
                     var vState = item.venue.region || item.venue.country;
-                    // ommit shows where at least one of the required keys are missing
+                    
+                    // ommit any shows where a required key is missing
                     if((!vName) || (!vState) || (!timestamp) ){ 
                         return; 
                     }
-
+                    console.log(liner(7));
                     console.log("(" + timestamp + ")");
                     console.log(vName);
                     console.log(vCity + ", " + vState);
-                    console.log("-------------\n")
+                    console.log(liner(7)+'\n');
                     
                 }));
         }
@@ -61,42 +66,57 @@ function concertThis(artist){
 function spotifyThisSong(song){
     var spotify = new Spotify(keys.spotify);
     
-    spotify // limiting the search to just top result
+    spotify
         .search({ type: 'track', query: song})
         .then(function(response) {
-           
+            // limiting the search to just top result
             var item = response.tracks.items[0];
+            // format time
             var timeFrmt = moment(item.album.release_date,"YYYY-MM-DD").format("MM/DD/YYYY")
             console.log(item.name)
             console.log(timeFrmt);
             console.log(item.artists[0].name)
+
+            // conditional check for the 30s preview url
             if(item.preview_url){console.log(item.preview_url)}
             else{console.log("  ~~> \""+item.name+"\" can not be previewed")}
         })
         .catch(function(err) {
             console.log(err);
         });
-        return 0;
 }
 
 function movieThis(movie){
-    var queryUrl = "http://www.omdbapi.com/?t="+ movie +"&y=&plot=short&apikey=trilogy"
-    var str = "";
-    request(queryUrl, function(error, response, body) {
+    // default movie if none selected
+    movie = movie || "Mr. Nobody";
 
+    var str= "";
+    var queryUrl = "http://www.omdbapi.com/?t="+ movie +"&y=&plot=short&apikey=trilogy"
+    request(queryUrl, function(error, response, body) {
+        
         if (!error && response.statusCode === 200) {
             var movieObj = JSON.parse(body);
-            str += "\n\n\t["+movieObj.Title +"]\n"
-            str +="   "+liner(movieObj.Title.length)+"\n"
 
-            str += "Produced in: " +movieObj.Country.split(", ").join(", and ");
+            // formatted values 
+            var formattedTitle = "\n\n\t["+movieObj.Title +"]\n";
+            var measuredLine = "   "+liner(movieObj.Title.length)+"\n";
+            var countryList = movieObj.Country.split(", ").join(", and ");
+            var stars = formatList(movieObj.Actors.split(", "),"Starring:");
+
+            str += formattedTitle;
+            str += measuredLine;
+
+            str += "Produced in: " + countryList;
             str +=" in " + movieObj.Year + "\n";
-            str += formatList(movieObj.Actors.split(", "),"Starring:");
+            str += stars;
             str += "\n";
 
             // Rotten tomatoes is choice #2 if it exists
             if(movieObj.Ratings.length>1){
-               str += movieObj.Ratings[1].Source + " gave a rating of "+movieObj.Ratings[1].Value +"\n" ;
+                var src = movieObj.Ratings[1].Source;
+                var rating = movieObj.Ratings[1].Value +"\n";
+
+               str +=  (src+ " gave a rating of " +rating);
             }
          
             str += "Produced in: " +movieObj.Country + "\n";
@@ -112,7 +132,7 @@ function movieThis(movie){
 }
 // FORMATTING HELPERS
 var liner = function(size){
-    var line = "—~"
+    var line = "~≈"
     return line.repeat(size)
 }
 function pretty(category,size){
@@ -121,7 +141,7 @@ function pretty(category,size){
 function formatText(text){
     var parts = text.split(" ");
     var bord = " |     ";
-    var str = "   "+liner(20)+"\n"+bord;
+    var str = "   "+liner(40)+"\n"+bord;
     for(var i = 0;i<parts.length;i++){
         str += parts[i] + " ";
         if(i>0&&i%10==0){
