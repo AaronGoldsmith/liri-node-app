@@ -1,5 +1,6 @@
 var dot = require('dotenv').config()
 var keys = require('./keys.js');
+var fs = require('fs')
 var Spotify = require('node-spotify-api');
 var request = require('request');
 var moment = require('moment')
@@ -28,7 +29,7 @@ switch(cmd){
    case("concert-this"): concertThis(urlArg); break; // call concert function 
    case("spotify-this-song"): spotifyThisSong(urlArg); break; // call a spotify function
    case("movie-this"): movieThis(urlArg); break; // call the movie function
-   case("do-what-it-says"): break; // does another function
+   case("do-what-it-says"): followDirections(); break; // does another function
    default: console.log("<ERROR>: Invalid command given"); break;
 }
 
@@ -148,6 +149,16 @@ function formatList(list,named){
     // 1. child
     // 2. child
     // 3. child
-function followDirections(direction){
- 
+function followDirections(){
+   fs.readFile("random.txt","utf8",function(error,data){
+       if(error){return;}
+       var parts = data.split(",");
+       switch(parts[0]){
+        case("concert-this"): concertThis(parts[1]); break; // call concert function 
+        case("spotify-this-song"): spotifyThisSong(parts[1]); break; // call a spotify function
+        case("movie-this"): movieThis(parts[1]); break; // call the movie function
+        case("do-what-it-says"): followDirections(); break; // does another function
+        default: console.log("<ERROR>: Invalid command given"); break;
+     }
+   })
 }
