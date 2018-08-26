@@ -13,7 +13,6 @@ if (dot.error) {
     throw result.error
 }
 
-<<<<<<< HEAD
 /* 
     `process.argv` contains an array of values 
      passed in through stdin (standard input) 
@@ -32,20 +31,6 @@ var urlArg = cmdlist.splice(3,cmdlist.length).join(" ");
 console.log(urlArg);
 
 // use a switch statement to determine which command was passed in
-=======
-// command variable
-var cmd = process.argv[2];
-
-// an array of user input
-var cmdlist = process.argv;
-
-
-// remove arguments index 0,1,2 (not needed)
-cmdlist.splice(0,3); 
-var urlArg = cmdlist.join(" ");
-
-// switch statement on string passed through argv
->>>>>>> 4d23e910bd056b51f5c8b301ceefab51b678a4d2
 switch(cmd){
    case("concert-this"): concertThis(urlArg); break; // call concert function 
    case("spotify-this-song"): spotifyThisSong(urlArg); break; // call a spotify function
@@ -57,27 +42,21 @@ switch(cmd){
 function concertThis(artist){
     var queryUrl = "https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp";
     request(queryUrl,function(error, response, body) {
-<<<<<<< HEAD
 
-    /*  If there were no errors and the response code is 200 */
+        /* On a succesful response */
         if (!error && response.statusCode === 200) {
-        /*      response and body are both JSOn objects,
-                want to parse into JS obj 
-        */
+            //  returns JSON objects, parse into JS obj
+    
                 var shows = JSON.parse(body); 
-=======
-        /* If there were no errors and the response code is 200 */
-        if (!error && response.statusCode === 200) {
-                var shows = JSON.parse(body); // JSON -->  {keys:value}                
->>>>>>> 4d23e910bd056b51f5c8b301ceefab51b678a4d2
                 console.log(shows.forEach(function(item){
+                    // Moment API
                     var timestamp = moment(item.datetime).format("MM/DD/YYYY")
 
                     var vName = item.venue.name;
                     var vCity = item.venue.city;
 
                     // prioritize the region first
-                    // than as a fall back it selects country
+                    // if it can't find region, it selects country as a backup
                     var vState = item.venue.region || item.venue.country;
                     
                     // ommit any shows where a required key is missing
@@ -96,6 +75,7 @@ function concertThis(artist){
 }
 
 function spotifyThisSong(song){
+    // load the keys into 
     var spotify = new Spotify(keys.spotify);
     
     spotify
@@ -167,18 +147,11 @@ var liner = function(size){
     var line = "~≈"
     return line.repeat(size)
 }
-function pretty(category,size){
-    return "\n \t~ "+category+" ~\n "+ liner(size) +"\n"; 
-}
+
 function formatText(text){
     var parts = text.split(" ");
-<<<<<<< HEAD
     var bdr = " |     ";
-    var str = "   "+liner(20)+"\n"+bdr;
-=======
-    var bord = " |     ";
-    var str = "   "+liner(40)+"\n"+bord;
->>>>>>> 4d23e910bd056b51f5c8b301ceefab51b678a4d2
+    var str = "   "+liner(40)+"\n"+bdr;
     for(var i = 0;i<parts.length;i++){
         str += parts[i] + " ";
         if(i>0&&i%10==0){
@@ -190,8 +163,8 @@ function formatText(text){
 function formatList(list,named){
     var str = named;
     
-    list.forEach( 
-        (item,ind) => str += ("\n   "+(ind+1) + ". " + item));
+    list.forEach( (item,ind) => 
+            str += ("\n   "+(ind+1) + ". " + item));
     return str+"\n"; 
 }
 
@@ -199,6 +172,8 @@ function followDirections(){
    fs.readFile("random.txt","utf8",function(error,data){
        if(error){return;}
        var parts = data.split(",");
+       // check which word was given first in the text file
+       // pass in second value as argument to function
        switch(parts[0]){
         case("concert-this"): concertThis(parts[1]); break; // call concert function 
         case("spotify-this-song"): spotifyThisSong(parts[1]); break; // call a spotify function
