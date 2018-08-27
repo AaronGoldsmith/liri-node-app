@@ -48,9 +48,9 @@ require('moment')
   - `do-what-it-says` - takes in no arguments, but expects a text file called "random.txt" to include the function and its respective parameter
 
 
-### Continued Development:
-  - Adding in functionality to save user input/history in a separate text file
-  - If an artist has a newer version of an old song, it will give the most recent version not OG
+### Future Development:
+  [ x ] Adding in functionality to log results in a separate text file
+  [ ] If an artist has a newer version of an old song, it will give the most recent version not OG
 
 
 ### Troubleshooting
