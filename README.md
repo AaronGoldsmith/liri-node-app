@@ -49,8 +49,8 @@ require('moment')
 
 
 ### Future Development:
-  [ x ] Adding in functionality to log results in a separate text file
-  [ ] If an artist has a newer version of an old song, it will give the most recent version not OG
+~~Adding in functionality to log results in a separate text file~~
+If an artist has a newer version of an old song, it will give the most recent version not OG
 
 
 ### Troubleshooting
