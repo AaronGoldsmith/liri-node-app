@@ -22,7 +22,8 @@ var cmdlist = process.argv;
      care about keeping our query request
 */
 var urlArg = cmdlist.splice(3,cmdlist.length)
-console.log(urlArg);
+
+// setup default here
 if(urlArg.length>0){
     urlArg.join(" ");
 }else{
@@ -30,6 +31,7 @@ if(urlArg.length>0){
         urlArg="The Sign, Ace Of Base"
     }
 }
+
 // use a switch statement to determine which command was passed in
 switch(cmd){
    case("concert-this"): concertThis(urlArg); break; // call concert function 
@@ -56,6 +58,7 @@ function concertThis(artist){
 
                     var vName = item.venue.name;
                     var vCity = item.venue.city;
+
                     // prioritize the region first
                     // if it can't find region, it selects country as a backup
                     var vState = item.venue.region || item.venue.country;
@@ -66,12 +69,8 @@ function concertThis(artist){
                     if((!vName) || (!vState) || (!timestamp) ){ 
                         return; 
                     }
-                    var complete = (liner(7)+"\n("+timestamp+")\n"+location +"\n"+ liner(7)+"\n")
-                    // console.log(liner(7));
-                    // console.log("(" + timestamp + ")");
-                    // console.log(vName);
-                    // console.log(vCity + ", " + vState);
-                    // console.log(liner(7)+'\n');
+                    var complete = (liner(7)+timestamp+"\n"+location +"\n");
+
                     console.log(complete);
                 });
         }
@@ -81,7 +80,7 @@ function concertThis(artist){
 function spotifyThisSong(song){
     // load the keys into spotify variable
     var spotify = new Spotify(keys.spotify);
-    
+    var str = "";
     spotify
         .search({ type: 'track', query: song})
         .then(function(response) {
@@ -90,16 +89,21 @@ function spotifyThisSong(song){
             
             // Using Moment.js API - format date
             var timeFrmt = moment(item.album.release_date,"YYYY-MM-DD").format("MM/DD/YYYY")
-            console.log(item.name)
-            console.log(timeFrmt);
-            console.log(item.artists[0].name)
-
+            var songName = item.name;
+            var artist = item.artists[0].name;
+           
+            str += (liner(20)+songName + "\n" + timeFrmt + "\n" + artist +"\n")
+            
             // conditional check for the 30s preview url
+
             if(item.preview_url){
-                console.log(item.preview_url);}
+                str+=item.preview_url}
             else{
-                console.log("  ~~> \""+item.name+"\" can not be previewed")
+                str+= "  ~~> \""+item.name+"\" can not be previewed\n\n";
             }
+            str += liner(20);
+            console.log(str);
+
         })
         .catch(function(err) {
             console.log(err);
@@ -119,7 +123,7 @@ function movieThis(movie){
 
             // formatted values 
             var formattedTitle = "\n\n\t["+movieObj.Title +"]\n";
-            var measuredLine = "   "+liner(movieObj.Title.length)+"\n";
+            var measuredLine = liner(movieObj.Title.length,"  ");
             var countryList = movieObj.Country.split(", ").join(", and ");
             var stars = formatList(movieObj.Actors.split(", "),"Starring:");
 
@@ -128,8 +132,7 @@ function movieThis(movie){
 
             str += "Produced in: " + countryList;
             str +=" in " + movieObj.Year + "\n";
-            str += stars;
-            str += "\n";
+            str += stars +"\n";
 
             // Rotten tomatoes is choice #2 if it exists
             if(movieObj.Ratings.length>1){
@@ -138,35 +141,55 @@ function movieThis(movie){
 
                str +=  (src+ " gave a rating of " +rating);
             }
+            str += "IMDB rates it a: " + movieObj.imdbRating+ "\n";
+
          
             str += "Produced in: " +movieObj.Country + "\n";
             str += "Lang: "+movieObj.Language+ "\n";
-            str += "IMDB rates it a: " + movieObj.imdbRating+ "\n";
 
              // adding line breaks
-             str += formatText(movieObj.Plot)
+            str += formatBlock(movieObj.Plot)
         }
         console.log(str);
       });
       return 0;
 }
-// FORMATTING HELPERS
-var liner = function(size){
+
+
+function followDirections(){
+    fs.readFile("random.txt","utf8",function(error,data){
+        if(error){return;}
+        var parts = data.split(",");
+        // check which word was given first in the text file
+        // pass in second value as argument to function
+        switch(parts[0]){
+         case("concert-this"): concertThis(parts[1]); break; // call concert function 
+         case("spotify-this-song"): spotifyThisSong(parts[1]); break; // call a spotify function
+         case("movie-this"): movieThis(parts[1]); break; // call the movie function
+         case("do-what-it-says"): followDirections(); break; // does another function
+         default: console.log("<ERROR>: Invalid command given"); break;
+      }
+    })
+ }
+
+/* HELPERS FUNCTIONS FOR FORMATTING */
+var liner = function(size,space){
     var line = "~≈"
-    return line.repeat(size)
+    var spaced = space || "";
+    return "\n"+spaced+line.repeat(size)+"\n"
 }
 
-function formatText(text){
+function formatBlock(text){
     var parts = text.split(" ");
     var bdr = " |     ";
-    var str = "   "+liner(40)+"\n"+bdr;
+    var str = "   "+liner(40,"  ")+bdr;
     for(var i = 0;i<parts.length;i++){
         str += parts[i] + " ";
         if(i>0&&i%10==0){
             str += "\n" +bdr; 
         }
     }
-    return str+'\n  '+liner(40);
+    return str+liner(40,"  ");
 }
 function formatList(list,named){
     var str = named;
@@ -176,18 +199,4 @@ function formatList(list,named){
     return str+"\n"; 
 }
 
-function followDirections(){
-   fs.readFile("random.txt","utf8",function(error,data){
-       if(error){return;}
-       var parts = data.split(",");
-       // check which word was given first in the text file
-       // pass in second value as argument to function
-       switch(parts[0]){
-        case("concert-this"): concertThis(parts[1]); break; // call concert function 
-        case("spotify-this-song"): spotifyThisSong(parts[1]); break; // call a spotify function
-        case("movie-this"): movieThis(parts[1]); break; // call the movie function
-        case("do-what-it-says"): followDirections(); break; // does another function
-        default: console.log("<ERROR>: Invalid command given"); break;
-     }
-   })
-}
+
