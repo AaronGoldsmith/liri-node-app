@@ -10,7 +10,7 @@
  |Package|Purpose|Link|
  |---|---|---|
  | `fs` | file system integration | [nodejs.org/api/fs](https://nodejs.org/api/fs.html)
- | `dotenv`| set enviornment variables|
+ | `dotenv`| set enviornment variables|[npmjs.com/package/dotenv](https://www.npmjs.com/package/dotenv)
  | `node-spotify-api` | Spotify API| [npmjs.com/package/node-spotify-api](https://www.npmjs.com/package/node-spotify-api)
  | `request` | Makes calls through http | [npmjs.com/package/request](https://www.npmjs.com/package/request) |
  | `moment` | Formats date/time | [npmjs.com/package/moment](https://www.npmjs.com/package/moment)
