@@ -1,10 +1,16 @@
 # liri-node-app
  LIRI is a command line Node.js application run from the terminal.
 
- The user may enter in a variety of different different commands, but can only get one result at a time.
+ The user may enter in a variety of different commands, and gets one result at a time.
  
 ### How to use
  Clone down repo and using node package manager, `npm install` the listed packages into the root directory of the project.
+ Create a `.env` file containing your spotify ID and API Key (_Spotify Secret_)
+ ```javascript
+ SPOTIFY_ID = <YOUR SPOTIFY ID>
+ SPOTIFY_SECRET= <YOUR UNIQUE API KEY>
+ ```
+ 
 
 #### Node Packages:
  |Package|Purpose|Link|
