@@ -5,6 +5,12 @@
  
 ### How to use
  Clone down repo and using node package manager, `npm install` the listed packages into the root directory of the project.
+ Create a `.env` file containing your spotify ID and API Key (_Spotify Secret_)
+ ```javascript
+ SPOTIFY_ID = <YOUR SPOTIFY ID>
+ SPOTIFY_SECRET= <YOUR UNIQUE API KEY>
+ ```
+ 
 
 #### Node Packages:
  |Package|Purpose|Link|
