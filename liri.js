@@ -71,7 +71,8 @@ function concertThis(artist){
                     }
                     var complete = (liner(7)+timestamp+"\n"+location +"\n");
 
-                    console.log(complete);
+                    // console.log(complete);
+                    logResponse(complete);
                 });
         }
     });
@@ -99,16 +100,19 @@ function spotifyThisSong(song){
             if(item.preview_url){
                 str+=item.preview_url}
             else{
-                str+= "  ~~> \""+item.name+"\" can not be previewed\n\n";
+                str+= "  ~~> \""+item.name+"\" can not be previewed";
             }
             str += liner(20);
-            console.log(str);
+
+            logResponse(str);
+
 
         })
         .catch(function(err) {
             console.log(err);
         });
 }
+
 
 function movieThis(movie){
     // Sets a default movie if none was given
@@ -150,9 +154,9 @@ function movieThis(movie){
              // adding line breaks
             str += formatBlock(movieObj.Plot)
         }
-        console.log(str);
+        logResponse(str);
+
       });
-      return 0;
 }
 
 
@@ -171,6 +175,16 @@ function followDirections(){
       }
     })
  }
+
+ function logResponse(text){
+    fs.appendFile("log.txt", text, function(err){
+        if(err){
+            console.log(err)
+        }
+    });
+    // console.log(text)
+}
+
 
 /* HELPERS FUNCTIONS FOR FORMATTING */
 var liner = function(size,space){
