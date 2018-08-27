@@ -181,8 +181,8 @@ function followDirections(){
         if(err){
             console.log(err)
         }
+        else{"logged results to log.txt"}
     });
-    // console.log(text)
 }
 
 
